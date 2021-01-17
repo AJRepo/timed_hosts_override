@@ -13,6 +13,7 @@
 BACKUP_FILE="/etc/hosts.bak"
 #Overrides file to be used
 OVERRIDE_FILE="/etc/hosts.overrides"
+MYGROUP=$(groups | awk '{print $1}')
 
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run with sudo" 1>&2
@@ -45,12 +46,16 @@ countdowntimer.py --minutes 20 --quiet --terminal_beep
 echo -e '\a'
 
 #Check if command play exists and if so make a sound
-if [[ $(command -v play) ]]; then
-  play -nq -t alsa synth .5 sine 440
+if [[ $(command -v wall) ]]; then
+  wall $MYGROUP "Time's Up"
 fi
+#if [[ $(command -v play) ]]I; then
+#  play -nq -t alsa synth .5 sine 440
+#fi
 
 #Restore from backup
 sudo mv $BACKUP_FILE /etc/hosts
+
 if [ $? == 1 ]; then
-  echo "Warning - Error in restoring over $BACKUP_FILE"
+  wall $MYGROUP "Warning - Error in restoring over $BACKUP_FILE"
 fi
