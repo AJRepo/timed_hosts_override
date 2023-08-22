@@ -9,8 +9,8 @@ function block_host() {
 }
 function unblock_host() {
   this_site=$1
-  sed -rin /^\#127.0.0.1\\t"$this_site"/s//127.0.0.1\\t"$this_site"/ /etc/hosts
-  echo "Blocking $this_site"
+  sed -rin /^127.0.0.1\\t"$this_site"/s//\#127.0.0.1\\t"$this_site"/ /etc/hosts
+  echo "Unlocking $this_site"
 }
 
 if [ "$1" == "block" ]; then
