@@ -1,6 +1,8 @@
 #!/bin/bash
 
-SITES="old.reddit.com www.reddit.com www.imgur.com imgur.com www.youtube.com youtube.com"
+#set -x
+
+SITES="old.reddit.com www.reddit.com www.imgur.com imgur.com www.youtube.com youtube.com www.theguardian.com theguardian.com"
 USE_PIETIMER="False"
 
 #does pietimer exist?
@@ -35,13 +37,23 @@ function start_timer() {
 
 function block_host() {
   this_site=$1
-  sed -rin /^\#127.0.0.1\\t"$this_site"/s//127.0.0.1\\t"$this_site"/ /etc/hosts
   #echo "Blocking $this_site"
+  if [ -w /etc/hosts ]; then
+    sed -rin /^\#127.0.0.1\\t"$this_site"/s//127.0.0.1\\t"$this_site"/ /etc/hosts
+  else
+    echo "Don't have write access to /etc/hosts - exiting"
+    exit 1
+  fi
 }
 function unblock_host() {
   this_site=$1
-  sed -rin /^127.0.0.1\\t"$this_site"/s//\#127.0.0.1\\t"$this_site"/ /etc/hosts
   #echo "Unlocking $this_site"
+  if [ -w /etc/hosts ]; then
+    sed -rin /^127.0.0.1\\t"$this_site"/s//\#127.0.0.1\\t"$this_site"/ /etc/hosts
+  else
+    echo "Don't have write access to /etc/hosts - exiting"
+    exit 1
+  fi
 }
 
 if [[ $2 -le 0 ]]; then
