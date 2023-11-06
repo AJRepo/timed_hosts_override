@@ -3,12 +3,18 @@
 #set -x
 
 SITES="old.reddit.com www.reddit.com www.imgur.com imgur.com www.youtube.com youtube.com www.theguardian.com theguardian.com"
+SITES="old.reddit.com www.reddit.com www.imgur.com imgur.com www.theguardian.com theguardian.com"
 USE_PIETIMER="False"
 
-#does pietimer exist?
-PIETIMER=$(which countdowntimer.py)
+#does pietimer exist? Searches system $PATH
+#PIETIMER=$(which countdowntimer.py)
+PIETIMER=$(which pietimer.py)
 if [ -x "$PIETIMER" ]; then
   USE_PIETIMER="True"
+else
+  echo "------------------------------------------------------------------"
+  echo "Can't find executable '$PIETIMER' so falling back on text only timer"
+  echo "------------------------------------------------------------------"
 fi
 
 
@@ -20,12 +26,12 @@ function start_timer() {
         #No reason to run the timer as root
         if [[ $SUDO_USER != "" ]]; then
           echo "For $seconds seconds: See gui timer"
-          sudo -u "$SUDO_USER" "$PIETIMER" -d -q -s "$seconds"
+          sudo -u "$SUDO_USER" "$PIETIMER" -- -d -q -s "$seconds"
         else
           echo "Won't run gui timer as root. Exiting."
           exit 1
         fi
-        echo "HO"
+        echo "In start_timer()"
       fi
     else
       echo "For $seconds seconds"
