@@ -20,13 +20,18 @@ fi
 
 function start_timer() {
   local seconds=$1
+  local color=$2
+  if [[ "$color" == "" ]] ; then
+    color="red"
+  fi
+  echo "COLOR = $color"
   if [[ "$seconds" != "" ]] && [[ "$seconds" =~ ^[0-9]+$ ]] && [[ "$seconds" -gt 0 ]] ; then
     if [ $USE_PIETIMER == "True" ]; then
       if [[ $(whoami) == "root" ]]; then
         #No reason to run the timer as root
         if [[ $SUDO_USER != "" ]]; then
           echo "For $seconds seconds: See gui timer"
-          sudo -u "$SUDO_USER" "$PIETIMER" -- -d -q -s "$seconds"
+          sudo -u "$SUDO_USER" "$PIETIMER" -- -d -q -s "$seconds" -c "$color"
         else
           echo "Won't run gui timer as root. Exiting."
           exit 1
@@ -62,10 +67,21 @@ function unblock_host() {
   fi
 }
 
-if [[ $2 -le 0 ]]; then
+if [[ $2 == "" ]]; then
+  echo "$0's 2nd argument, seconds ($2) is blank, making seconds=600 (10 min)"
+  SECONDS=600
+elif [[ $2 -le 0 ]]; then
   echo "seconds ($2) must be greater than 0"
   echo "$0 usage [block|unblock] #seconds"
   exit 1
+else
+  SECONDS="$2"
+fi
+
+if [[ $3 == "" ]]; then
+  echo "$0's 3nd argument, color ($3) is blank, making color=red"
+else
+  COLOR="$3"
 fi
 
 date
@@ -74,7 +90,8 @@ if [ "$1" == "block" ]; then
   for SITE in $SITES; do
     block_host "$SITE"
   done
-  start_timer "$2"
+  #Start the timer
+  start_timer "$SECONDS" "$COLOR"
   for SITE in $SITES; do
     unblock_host "$SITE"
   done
@@ -84,7 +101,8 @@ elif [ "$1" == "unblock" ]; then
   for SITE in $SITES; do
     unblock_host "$SITE"
   done
-  start_timer "$2"
+  #Start the timer
+  start_timer "$SECONDS" "$COLOR"
   for SITE in $SITES; do
     block_host "$SITE"
   done
