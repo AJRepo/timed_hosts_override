@@ -56,6 +56,13 @@ function block_host() {
     exit 1
   fi
 }
+
+function block_hosts() {
+  for SITE in $SITES; do
+    block_host "$SITE"
+  done
+}
+
 function unblock_host() {
   this_site=$1
   #echo "Unlocking $this_site"
@@ -65,6 +72,12 @@ function unblock_host() {
     echo "Don't have write access to /etc/hosts - exiting"
     exit 1
   fi
+}
+
+function unblock_hosts() {
+  for SITE in $SITES; do
+    unblock_host "$SITE"
+  done
 }
 
 if [[ $2 == "" ]]; then
@@ -87,26 +100,40 @@ fi
 date
 if [ "$1" == "block" ]; then
   echo "Blocking sites"
-  for SITE in $SITES; do
-    block_host "$SITE"
-  done
+  block_hosts
   #Start the timer
   start_timer "$SECONDS" "$COLOR"
-  for SITE in $SITES; do
-    unblock_host "$SITE"
-  done
+  unblock_hosts
   date
 elif [ "$1" == "unblock" ]; then
   echo "Unblocking sites"
-  for SITE in $SITES; do
-    unblock_host "$SITE"
-  done
+  unblock_hosts
   #Start the timer
   start_timer "$SECONDS" "$COLOR"
-  for SITE in $SITES; do
-    block_host "$SITE"
-  done
+  block_hosts
   date
+elif [ "$1" == "pomodoro" ]; then
+  for SPRINT in $(seq 1 4); do
+    echo "Sprint $SPRINT"
+    SECONDS=1500
+    COLOR="red"
+    echo "Blocking sites: Working"
+    block_hosts
+    start_timer "$SECONDS" "$COLOR"
+
+    SECONDS=300
+    COLOR="orange"
+    echo "Five Minute Break"
+    unblock_hosts
+    start_timer "$SECONDS" "$COLOR"
+  done
+  SECONDS=1800
+  COLOR="green"
+  echo "Restorative Break"
+  unblock_hosts
+  start_timer "$SECONDS" "$COLOR"
+  echo "Blocking sites:"
+  block_hosts
 else
-  echo "$0 requires argument [block|unblock]"
+  echo "$0 requires argument [block|unblock|pomodoro]"
 fi
