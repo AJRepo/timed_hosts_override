@@ -100,14 +100,14 @@ fi
 
 date
 if [[ "$1" == "block" ]]; then
-  echo "Blocking sites"
+  echo "  Blocking sites"
   block_hosts
   #Start the timer
   start_timer "$SECONDS" "$COLOR"
   unblock_hosts
   date
 elif [[ "$1" == "unblock" ]]; then
-  echo "Unblocking sites"
+  echo "  Unblocking sites"
   unblock_hosts
   #Start the timer
   start_timer "$SECONDS" "$COLOR"
@@ -118,22 +118,23 @@ elif [[ "$1" == "pomodoro" || "$1" == "pmodoro" ]] ; then
     echo "Sprint $SPRINT"
     SECONDS=1500
     COLOR="red"
-    echo "   Blocking sites: Working"
+    echo "  Blocking sites: Working"
     block_hosts
     start_timer "$SECONDS" "$COLOR"
 
     SECONDS=300
     COLOR="orange"
-    echo "    Five Minute Break"
+    echo "  Five Minute Break"
     unblock_hosts
     start_timer "$SECONDS" "$COLOR"
   done
   SECONDS=1800
   COLOR="green"
-  echo "    Restorative Break"
+  echo "  Restorative Break"
   unblock_hosts
   start_timer "$SECONDS" "$COLOR"
-  echo "    Blocking sites: Reset to default"
+  echo "Done!"
+  echo "Blocking sites: Reset to default"
   block_hosts
 else
   echo "$0 requires argument [block|unblock|pomodoro]"
