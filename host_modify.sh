@@ -24,13 +24,13 @@ function start_timer() {
   if [[ "$color" == "" ]] ; then
     color="red"
   fi
-  echo "COLOR = $color"
+  #echo "COLOR = $color"
   if [[ "$seconds" != "" ]] && [[ "$seconds" =~ ^[0-9]+$ ]] && [[ "$seconds" -gt 0 ]] ; then
     if [ $USE_PIETIMER == "True" ]; then
       if [[ $(whoami) == "root" ]]; then
         #No reason to run the timer as root
         if [[ $SUDO_USER != "" ]]; then
-          echo "For $seconds seconds: See gui timer"
+          echo "  For $seconds seconds: See gui timer"
           sudo -u "$SUDO_USER" "$PIETIMER" -- -d -q -s "$seconds" -c "$color"
         else
           echo "Won't run gui timer as root. Exiting."
@@ -39,7 +39,7 @@ function start_timer() {
         echo "In start_timer()"
       fi
     else
-      echo "For $seconds seconds"
+      echo "  For $seconds seconds"
       sleep "$seconds"
     fi
   fi
@@ -118,22 +118,22 @@ elif [[ "$1" == "pomodoro" || "$1" == "pmodoro" ]] ; then
     echo "Sprint $SPRINT"
     SECONDS=1500
     COLOR="red"
-    echo "Blocking sites: Working"
+    echo "   Blocking sites: Working"
     block_hosts
     start_timer "$SECONDS" "$COLOR"
 
     SECONDS=300
     COLOR="orange"
-    echo "Five Minute Break"
+    echo "    Five Minute Break"
     unblock_hosts
     start_timer "$SECONDS" "$COLOR"
   done
   SECONDS=1800
   COLOR="green"
-  echo "Restorative Break"
+  echo "    Restorative Break"
   unblock_hosts
   start_timer "$SECONDS" "$COLOR"
-  echo "Blocking sites:"
+  echo "    Blocking sites: Reset to default"
   block_hosts
 else
   echo "$0 requires argument [block|unblock|pomodoro]"
