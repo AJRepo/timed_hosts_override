@@ -81,38 +81,39 @@ function unblock_hosts() {
 }
 
 if [[ $2 == "" ]]; then
-  echo "$0's 2nd argument, seconds ($2) is blank, making seconds=600 (10 min)"
+  #echo "$0's 2nd argument, seconds ($2) is blank, making seconds=600 (10 min)"
   SECONDS=600
 elif [[ $2 -le 0 ]]; then
   echo "seconds ($2) must be greater than 0"
-  echo "$0 usage [block|unblock] #seconds"
+  echo "$0 usage [block|unblock|pomodoro] #seconds"
   exit 1
 else
   SECONDS="$2"
 fi
 
-if [[ $3 == "" ]]; then
-  echo "$0's 3nd argument, color ($3) is blank, making color=red"
+if [[ "$3" == "" ]]; then
+  #echo "$0's 3nd argument, color ($3) is blank, making color=red"
+  COLOR="red"
 else
   COLOR="$3"
 fi
 
 date
-if [ "$1" == "block" ]; then
+if [[ "$1" == "block" ]]; then
   echo "Blocking sites"
   block_hosts
   #Start the timer
   start_timer "$SECONDS" "$COLOR"
   unblock_hosts
   date
-elif [ "$1" == "unblock" ]; then
+elif [[ "$1" == "unblock" ]]; then
   echo "Unblocking sites"
   unblock_hosts
   #Start the timer
   start_timer "$SECONDS" "$COLOR"
   block_hosts
   date
-elif [ "$1" == "pomodoro" ]; then
+elif [[ "$1" == "pomodoro" || "$1" == "pmodoro" ]] ; then
   for SPRINT in $(seq 1 4); do
     echo "Sprint $SPRINT"
     SECONDS=1500
