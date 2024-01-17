@@ -9,6 +9,9 @@ USE_PIETIMER="False"
 #does pietimer exist? Searches system $PATH
 #PIETIMER=$(which countdowntimer.py)
 PIETIMER=$(which pietimer.py)
+if readlink -q $PIETIMER > /dev/null ; then
+  PIETIMER=$(readlink $PIETIMER)
+fi
 if [ -x "$PIETIMER" ]; then
   USE_PIETIMER="True"
 else
